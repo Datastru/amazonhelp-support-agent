@@ -82,6 +82,17 @@ python eval/run_eval.py --out outputs/eval_report_full.json   # ~53 min -> outpu
 python scripts/_score_judge_agreement.py                        # human/judge kappa -> golden_set/human_judge_agreement.csv
 ```
 
+## Report as Word docs
+
+`report/REPORT.docx` and `report/decision_log.docx` are generated from the
+markdown source and committed alongside it. Regenerate after editing the
+`.md` files with:
+
+```
+python scripts/make_report_docx.py report/REPORT.md report/REPORT.docx --title "AmazonHelp Support Agent - Report"
+python scripts/make_report_docx.py report/decision_log.md report/decision_log.docx --title "Decision Log"
+```
+
 ## Repo layout
 
 ```
