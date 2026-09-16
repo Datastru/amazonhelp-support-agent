@@ -35,7 +35,7 @@ tweet -> classify (TF-IDF+LogReg baseline, and a few-shot prompted LLM)
   (~10GB total download.) The pipeline talks to Ollama's REST API on
   `localhost:11434` - no cloud API key needed or used anywhere in this repo.
 
-## Quick reproduce (~12 minutes)
+## Quick reproduce (~9 minutes)
 
 The retrieval index, baseline classifier, and hand-labeled golden set are
 already committed under `artifacts/` and `golden_set/` - you don't need to
@@ -50,11 +50,12 @@ python eval/run_eval.py --n 35
 Prints a summary (intent accuracy, escalation precision/recall + cost,
 reply-quality judge scores, all three ways: the system vs. a trivial baseline
 vs. a simple baseline) and writes `outputs/eval_report.json` +
-`outputs/confusion_matrix.png`. `--n 35` is a time-boxed subsample (seeded,
-`--seed 42`); see the note on this in report section 6.
+`outputs/eval_report_confusion_matrix.png`. `--n 35` is a time-boxed subsample (seeded,
+`--seed 42`), at the ~15s/example steady-state rate observed on an RTX 4060 -
+slower hardware or CPU-only Ollama will need a smaller `--n`.
 
 The numbers actually cited in `report/REPORT.md` are from the full golden set
-(208 examples, ~70 minutes, already committed as
+(208 examples, ~53 minutes on this machine, already committed as
 `outputs/eval_report_full.json`). Reproduce them yourself with:
 
 ```
@@ -77,6 +78,8 @@ python scripts/build_retrieval_index.py                   # ~1 min -> artifacts/
 python scripts/build_golden_set.py                        # ~1 min -> golden_set/unlabeled.csv
 #   (hand-label true_intent / ideal_reply_direction / escalate / escalate_reason - already done,
 #    see golden_set/golden_set.csv and scripts/_apply_golden_labels.py for how)
+python eval/run_eval.py --out outputs/eval_report_full.json   # ~53 min -> outputs/
+python scripts/_score_judge_agreement.py                        # human/judge kappa -> golden_set/human_judge_agreement.csv
 ```
 
 ## Repo layout
@@ -87,7 +90,7 @@ pipeline/            the actual system: classify, retrieval, draft, escalate, ag
 eval/                 judge + metrics + the eval harness
 golden_set/           200+ hand-labeled examples, sampling notes, judge-agreement check
 artifacts/            committed: retrieval index, baseline classifier, intent training labels
-outputs/               generated: eval_report.json, brand_profile.csv, confusion_matrix.png
+outputs/               generated: eval_report_full.json + _rows.jsonl + _confusion_matrix.png, brand_profile.csv
 report/                 REPORT.md (the write-up) and decision_log.md
 ```
 

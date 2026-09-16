@@ -24,7 +24,27 @@
    up doing anything.
 
 Result: exactly 26 examples per intent (8 intents), 104 easy / 104 ambiguous
-by the classifier's own confidence.
+by the classifier's own *predicted* confidence. After hand-labeling the
+*true* intent, the distribution shifted a lot:
+
+| intent | stratified quota | true count after labeling |
+|---|---|---|
+| general_inquiry_or_other | 26 | 58 |
+| delivery_problem | 26 | 27 |
+| payment_or_giftcard_issue | 26 | 27 |
+| device_or_app_tech_support | 26 | 26 |
+| poor_support_experience | 26 | 23 |
+| packaging_or_damage_complaint | 26 | 20 |
+| refund_or_return_request | 26 | 16 |
+| prime_membership_value | 26 | 11 |
+
+`general_inquiry_or_other` more than doubled - a lot of messages the
+baseline classifier confidently assigned to a specific intent turned out, on
+reading, to be off-topic noise or praise. That's a real finding, not
+sampling noise - the baseline is confidently wrong on a meaningful chunk of
+traffic, concentrated in exactly the intent it has no training signal for
+recognizing as "none of the above." 27 of 208 (13%) were hand-labeled as
+needing escalation.
 
 ## Diversity, not just count
 

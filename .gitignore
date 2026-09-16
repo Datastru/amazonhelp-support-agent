@@ -1,7 +1,7 @@
 data/raw/
 data/processed/
+.claude/
 __pycache__/
 *.pyc
 .venv/
-outputs/*.png
 *.egg-info/

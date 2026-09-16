@@ -120,7 +120,7 @@ def main():
             ax.text(j, i, cm[i, j], ha="center", va="center", fontsize=8)
     fig.colorbar(im)
     fig.tight_layout()
-    cm_path = os.path.join(os.path.dirname(args.out), "confusion_matrix.png")
+    cm_path = args.out.replace(".json", "_confusion_matrix.png")
     fig.savefig(cm_path, dpi=120)
     print(f"wrote {cm_path}")
 

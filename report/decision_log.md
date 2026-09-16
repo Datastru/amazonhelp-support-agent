@@ -57,32 +57,30 @@ Non-obvious calls made while building this, and why. Roughly chronological.
    intent *and* its confidence** (`scripts/build_golden_set.py`), not a flat
    random sample - guarantees every intent (including the smallest) and both
    an "easy" and "ambiguous" tier are represented. A random sample would have
-   been dominated by `delivery_problem`.
+   been dominated by `delivery_problem`. The near-duplicate dedup pass on top
+   (cosine > 0.92) removed zero examples at this sample size - worth saying
+   plainly rather than claiming credit for a step that didn't end up doing
+   anything; the per-intent quota already produced enough diversity.
 
-9. **The near-duplicate dedup pass (cosine > 0.92) removed zero examples**
-   from the golden-set sample. Worth saying plainly rather than pretending
-   credit for it - the per-intent quota sampling already produced enough
-   diversity on its own at this sample size.
-
-10. **Retrieval corpus and clustering sample both capped at 1200 items**
+9. **Retrieval corpus and clustering sample both capped at 1200 items**
     (out of 4572 resolved threads / 28k English threads available).
     Embedding throughput (~14 items/sec even batched) makes this the
     practical ceiling for a 15-minute reproduce budget; diminishing returns
     past this size anyway for a k=3 retrieval lookup.
 
-11. **Escalation cost matrix is explicit, not accuracy-driven**: missing a
+10. **Escalation cost matrix is explicit, not accuracy-driven**: missing a
     safety-relevant message costs 10, missing an ordinary escalation-worthy
     one costs 3, an unnecessary escalation costs 1
     (`eval/metrics.py:COST_*`). A single accuracy or F1 number would treat
     all three the same, which is exactly backwards for this problem.
 
-12. **Escalation policy is first-match-wins over a priority list**, not a
+11. **Escalation policy is first-match-wins over a priority list**, not a
     weighted score - safety beats everything else regardless of what else is
     true about the message. Every decision carries one named reason string,
     not a confidence float, per the brief's own ask for something
     explainable.
 
-13. **Split "build once" artifacts from the timed "reproduce" path.**
+12. **Split "build once" artifacts from the timed "reproduce" path.**
     Reconstructing threads for the full brand + langdetect filtering over
     ~38k threads takes ~4 minutes on its own - too much of a 15-minute
     budget to spend before any evaluation happens. The retrieval index,
@@ -90,20 +88,20 @@ Non-obvious calls made while building this, and why. Roughly chronological.
     README's timed reproduce path only re-runs classification/retrieval/
     drafting/judging over the golden set, not the raw-data pipeline.
 
-14. **No fine-tuned neural classifier.** No labeled-training budget or GPU
+13. **No fine-tuned neural classifier.** No labeled-training budget or GPU
     time justified it for a take-home. Compared TF-IDF+LogReg against a
     well-prompted LLM classifier instead, per the brief's own suggested
     alternative ("fine-tune ... or use a well-prompted LLM ... try both,
     compare").
 
-15. **Judge defaults to the same model family as the drafter**
+14. **Judge defaults to the same model family as the drafter**
     (`qwen2.5:7b-instruct`) - a real, acknowledged limitation (correlated
     errors, possible leniency toward its own family's phrasing), not
     something papered over. Addressed by hand-scoring a subset and reporting
     the human/judge agreement (Cohen's kappa) rather than trusting the judge
     blindly - see `golden_set/human_judge_agreement.csv`.
 
-16. **Escalation keyword regexes were left narrow on purpose.** Hand-labeling
+15. **Escalation keyword regexes were left narrow on purpose.** Hand-labeling
     the golden set surfaced real misses - "$15k" isn't matched by the
     `\$\d+` amount pattern, "illegal" alone doesn't match the legal/PR regex
     (which looks for phrases like "legal action"), "50 times in the past
