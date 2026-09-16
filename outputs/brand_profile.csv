@@ -1,0 +1,13 @@
+brand,n_threads,avg_turn_depth,pct_depth_4plus,resolved_pct
+AmazonHelp,16243,3.4,38.1,13.2
+XboxSupport,2350,3.17,27.9,18.0
+AskPlayStation,2249,2.9,26.2,11.4
+AmericanAir,4665,2.88,25.4,9.4
+AppleSupport,11226,2.81,24.4,27.4
+British_Airways,2629,2.77,23.9,10.7
+SpotifyCares,5737,2.75,22.4,20.9
+Delta,4612,2.75,22.2,16.5
+Uber_Support,7958,2.72,20.6,7.4
+Ask_Spectrum,3097,2.68,18.1,21.4
+TMobileHelp,4612,2.67,19.7,6.0
+comcastcares,4350,2.55,15.6,12.6
